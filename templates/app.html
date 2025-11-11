@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trợ Lý Học Tập AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .pulse-ring {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes slide-up {
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-up {
+            animation: slide-up 0.3s ease-out;
+        }
+
+        .chat-message {
+            animation: slide-up 0.3s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                            </path>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-semibold">Trợ Lý Học Tập AI</h1>
+                </div>
+
+                <!-- User Info -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <span id="userName" class="text-sm font-medium text-gray-300"></span>
+                        <img id="userAvatar" class="w-9 h-9 rounded-full ring-2 ring-gray-700" src="" alt="User">
+                    </div>
+                    <button id="logoutButton"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors duration-200">
+                        Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-16 h-screen flex flex-col">
+        <div class="flex-1 flex bg-gray-900 p-6 gap-6">
+            <!-- Video Section -->
+            <div class="flex-1 flex items-center justify-center relative">
+                <!-- Video Container -->
+                <div class="relative bg-gray-800 rounded-2xl overflow-hidden shadow-2xl w-full h-full">
+                    <video id="videoElement" autoplay class="w-full h-full object-cover"></video>
+                    <canvas id="canvasElement" class="hidden"></canvas>
+
+                    <!-- Video Overlay Info -->
+                    <div id="screenShareStatus"
+                        class="absolute top-4 left-4 bg-black bg-opacity-60 backdrop-blur-sm px-4 py-2 rounded-lg z-10">
+                        <p class="text-sm font-medium">📺 Chưa chia sẻ màn hình</p>
+                    </div>
+
+                    <!-- Recording Indicator -->
+                    <div id="recordingIndicator"
+                        class="absolute top-4 right-4 bg-red-500 bg-opacity-90 backdrop-blur-sm px-4 py-2 rounded-lg flex items-center space-x-2 z-10">
+                        <div class="relative">
+                            <div class="w-3 h-3 bg-white rounded-full"></div>
+                            <div class="absolute inset-0 w-3 h-3 bg-white rounded-full pulse-ring"></div>
+                        </div>
+                        <span class="text-sm font-medium">Đang ghi âm</span>
+                    </div>
+
+                    <!-- Control Buttons - Absolute Position -->
+                    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-6 z-10">
+                        <!-- Screen Share Button -->
+                        <button id="screenShareButton"
+                            class="group relative w-16 h-16 bg-gray-700 bg-opacity-90 hover:bg-blue-600 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span
+                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 text-xs bg-black bg-opacity-75 px-2 py-1 rounded text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Chia
+                                sẻ màn hình</span>
+                        </button>
+
+                        <!-- Mic Toggle Button -->
+                        <button id="micButton"
+                            class="group relative w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                            <!-- Mic Icon (shown when not recording) -->
+                            <svg id="micOnIcon" class="hidden w-10 h-10 text-white" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                            </svg>
+                            <!-- Mic Off Icon (shown when recording) -->
+                            <svg id="micOffIcon" class="w-10 h-10 text-white" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                                <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <span id="micTooltip"
+                                class="absolute -top-10 left-1/2 transform -translate-x-1/2 text-xs bg-black bg-opacity-75 px-2 py-1 rounded text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Tắt
+                                mic</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="w-80 flex items-center">
+                <div class="bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-30 rounded-xl p-6 h-fit">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <h3 class="text-sm font-semibold text-blue-300 mb-2">💡 Hướng dẫn sử dụng</h3>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li>🖥️ Nhấn nút màn hình để chia sẻ bài tập của bạn</li>
+                                <li>🎤 Mic đã được bật sẵn - bạn có thể nói chuyện với AI ngay</li>
+                                <li>🔴 Nhấn nút mic để tắt khi không muốn ghi âm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentUser = null;
+
+        window.addEventListener("load", async function () {
+            // Lấy thông tin user
+            try {
+                const response = await fetch('/api/auth/user');
+                if (!response.ok) {
+                    window.location.href = "/";
+                    return;
+                }
+
+                currentUser = await response.json();
+                document.getElementById('userName').textContent = currentUser.name || currentUser.email;
+                document.getElementById('userAvatar').src = currentUser.picture || '';
+
+            } catch (error) {
+                console.error('Error loading user:', error);
+                window.location.href = "/";
+                return;
+            }
+
+            // Logout handler
+            document.getElementById('logoutButton').addEventListener('click', async () => {
+                try {
+                    await fetch('/api/auth/logout', { method: 'POST' });
+                    window.location.href = "/";
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            });
+
+            await initializeAudioContext();
+            connect();
+            // Tự động bật mic khi load trang
+            setTimeout(() => {
+                document.getElementById('micButton').click();
+            }, 500);
+        });
+
+        const URL = "ws://localhost:5000/ws";
+        const video = document.getElementById("videoElement");
+        const canvas = document.getElementById("canvasElement");
+        let context;
+        let stream = null;
+        let currentFrameB64;
+        let webSocket = null;
+        let audioContext = null;
+        let processor = null;
+        let pcmData = [];
+        let interval = null;
+        let initialized = false;
+        let audioInputContext;
+        let workletNode;
+
+        context = canvas.getContext("2d");
+        setInterval(captureImage, 3000);
+
+        async function startScreenShare() {
+            try {
+                stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: { width: { max: 640 }, height: { max: 480 } },
+                });
+                video.srcObject = stream;
+                await new Promise(resolve => {
+                    video.onloadedmetadata = () => {
+                        console.log("video loaded metadata");
+                        resolve();
+                    }
+                });
+
+                // Cập nhật UI khi chia sẻ thành công
+                document.getElementById('screenShareStatus').innerHTML = '<p class="text-sm font-medium">📺 Đang chia sẻ màn hình</p>';
+                const btn = document.getElementById('screenShareButton');
+                btn.classList.remove('bg-gray-700', 'hover:bg-blue-600');
+                btn.classList.add('bg-blue-600');
+            } catch (err) {
+                console.error("Error accessing the screen: ", err);
+                alert("Không thể chia sẻ màn hình. Vui lòng thử lại.");
+            }
+        }
+
+        function captureImage() {
+            if (stream && video.videoWidth > 0 && video.videoHeight > 0 && context) {
+                canvas.width = 640;
+                canvas.height = 480;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL("image/jpeg").split(",")[1].trim();
+                currentFrameB64 = imageData;
+            }
+        }
+
+        async function connect() {
+            try {
+                // Lấy WebSocket token từ server
+                console.log("🔑 Getting WebSocket token...");
+                const tokenResponse = await fetch('/api/auth/ws-token');
+
+                if (!tokenResponse.ok) {
+                    const errorText = await tokenResponse.text();
+                    console.error("❌ Failed to get token:", errorText);
+                    alert("Failed to get WebSocket token. Please refresh the page.");
+                    return;
+                }
+
+                const tokenData = await tokenResponse.json();
+                wsToken = tokenData.token;
+                console.log("✅ Got token:", wsToken.substring(0, 10) + "...");
+
+                // Kết nối WebSocket (token sẽ được gửi trong setup message)
+                console.log("🔌 Connecting to:", URL);
+                webSocket = new WebSocket(URL);
+
+                webSocket.onclose = (event) => {
+                    console.log("❌ WebSocket closed:", {
+                        code: event.code,
+                        reason: event.reason,
+                        wasClean: event.wasClean
+                    });
+                    if (event.code !== 1000) {
+                        alert("Connection closed unexpectedly. Code: " + event.code);
+                    }
+                };
+
+                webSocket.onerror = (event) => {
+                    console.error("❌ WebSocket error:", event);
+                };
+
+                webSocket.onopen = (event) => {
+                    console.log("✅ WebSocket connected!");
+                    sendInitialSetupMessage();
+                };
+
+                webSocket.onmessage = receiveMessage;
+            } catch (error) {
+                console.error("❌ Connection error:", error);
+                alert("Failed to connect: " + error.message);
+            }
+        }
+
+        let wsToken = null;
+
+        function sendInitialSetupMessage() {
+            console.log("📤 Sending setup message with token");
+            webSocket.send(JSON.stringify({
+                token: wsToken,
+                setup: { generation_config: { response_modalities: ["AUDIO"] } }
+            }));
+        }
+
+        function sendVoiceMessage(b64PCM) {
+            if (webSocket == null) return;
+            const payload = {
+                realtime_input: {
+                    media_chunks: [
+                        { mime_type: "audio/pcm", data: b64PCM },
+                        { mime_type: "image/jpeg", data: currentFrameB64 }
+                    ]
+                }
+            };
+            webSocket.send(JSON.stringify(payload));
+        }
+
+        function receiveMessage(event) {
+            const messageData = JSON.parse(event.data);
+            const response = new Response(messageData);
+            if (response.text) displayMessage("GEMINI: " + response.text);
+            if (response.audioData) injestAudioChuckToPlay(response.audioData);
+        }
+
+        async function initializeAudioContext() {
+            if (initialized) return;
+            audioInputContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+            await audioInputContext.audioWorklet.addModule("/static/pcm-processor.js");
+            workletNode = new AudioWorkletNode(audioInputContext, "pcm-processor");
+            workletNode.connect(audioInputContext.destination);
+            initialized = true;
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        function convertPCM16LEToFloat32(pcmData) {
+            const inputArray = new Int16Array(pcmData);
+            const float32Array = new Float32Array(inputArray.length);
+            for (let i = 0; i < inputArray.length; i++) {
+                float32Array[i] = inputArray[i] / 32768;
+            }
+            return float32Array;
+        }
+
+        async function injestAudioChuckToPlay(base64AudioChunk) {
+            try {
+                if (audioInputContext.state === "suspended") {
+                    await audioInputContext.resume();
+                }
+                const arrayBuffer = base64ToArrayBuffer(base64AudioChunk);
+                const float32Data = convertPCM16LEToFloat32(arrayBuffer);
+                workletNode.port.postMessage(float32Data);
+            } catch (error) {
+                console.error("Error processing audio chunk:", error);
+            }
+        }
+
+        function recordChunk() {
+            const buffer = new ArrayBuffer(pcmData.length * 2);
+            const view = new DataView(buffer);
+            pcmData.forEach((value, index) => view.setInt16(index * 2, value, true));
+            const base64 = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+            sendVoiceMessage(base64);
+            pcmData = [];
+        }
+
+        async function startAudioInput() {
+            audioContext = new AudioContext({ sampleRate: 16000 });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: { channelCount: 1, sampleRate: 16000 }
+            });
+            const source = audioContext.createMediaStreamSource(stream);
+            processor = audioContext.createScriptProcessor(4096, 1, 1);
+            processor.onaudioprocess = (e) => {
+                const inputData = e.inputBuffer.getChannelData(0);
+                const pcm16 = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    pcm16[i] = inputData[i] * 0x7fff;
+                }
+                pcmData.push(...pcm16);
+            };
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+            interval = setInterval(recordChunk, 3000);
+        }
+
+        function stopAudioInput() {
+            if (processor) processor.disconnect();
+            if (audioContext) audioContext.close();
+            clearInterval(interval);
+        }
+
+        function displayMessage(message) {
+            console.log(message);
+            const newParagraph = document.createElement("p");
+            newParagraph.textContent = message;
+            document.getElementById("chatLog").appendChild(newParagraph);
+        }
+
+        // Screen Share Button
+        document.getElementById('screenShareButton').addEventListener('click', async () => {
+            await startScreenShare();
+        });
+
+        // Mic Toggle Button
+        let isRecording = true; // Mặc định đang bật
+        const micButton = document.getElementById('micButton');
+        const micOnIcon = document.getElementById('micOnIcon');
+        const micOffIcon = document.getElementById('micOffIcon');
+        const micTooltip = document.getElementById('micTooltip');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+
+        micButton.addEventListener('click', () => {
+            if (isRecording) {
+                // Stop recording
+                stopAudioInput();
+                isRecording = false;
+
+                // Update UI
+                micButton.classList.remove('from-red-500', 'to-red-600', 'hover:from-red-600', 'hover:to-red-700');
+                micButton.classList.add('from-blue-500', 'to-blue-600', 'hover:from-blue-600', 'hover:to-blue-700');
+                micOnIcon.classList.remove('hidden');
+                micOffIcon.classList.add('hidden');
+                micTooltip.textContent = 'Bật mic';
+                recordingIndicator.classList.add('hidden');
+            } else {
+                // Start recording
+                startAudioInput();
+                isRecording = true;
+
+                // Update UI
+                micButton.classList.remove('from-blue-500', 'to-blue-600', 'hover:from-blue-600', 'hover:to-blue-700');
+                micButton.classList.add('from-red-500', 'to-red-600', 'hover:from-red-600', 'hover:to-red-700');
+                micOnIcon.classList.add('hidden');
+                micOffIcon.classList.remove('hidden');
+                micTooltip.textContent = 'Tắt mic';
+                recordingIndicator.classList.remove('hidden');
+            }
+        });
+
+        function displayMessage(message) {
+            console.log(message);
+        }
+
+        class Response {
+            constructor(data) {
+                this.text = data.text || null;
+                this.audioData = data.audio || null;
+            }
+        }
+    </script>
+</body>
+
+</html>

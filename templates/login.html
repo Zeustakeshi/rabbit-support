@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Trợ Lý Học Tập AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen">
+    <!-- Background decorative elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 float-animation">
+        </div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 float-animation"
+            style="animation-delay: 1s;"></div>
+        <div class="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 float-animation"
+            style="animation-delay: 2s;"></div>
+    </div>
+
+    <div class="relative min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="max-w-md w-full">
+            <!-- Logo and Title -->
+            <div class="text-center mb-8">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl mb-4 shadow-lg transform hover:scale-110 transition-transform duration-300">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">Trợ Lý Học Tập AI</h1>
+                <p class="text-gray-600 text-lg">Học tập thông minh cùng AI! 🚀</p>
+            </div>
+
+            <!-- Login Card -->
+            <div class="bg-white rounded-3xl shadow-2xl p-8 backdrop-blur-sm bg-opacity-95">
+                {% if google_client_id and google_client_id != '' %}
+                <div class="space-y-6">
+                    <div class="text-center">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-2">Chào bạn! 👋</h2>
+                        <p class="text-gray-600">Đăng nhập để bắt đầu học tập nhé</p>
+                    </div>
+
+                    <!-- Google Sign In Button -->
+                    <div class="flex justify-center">
+                        <div id="g_id_onload" data-client_id="{{ google_client_id }}"
+                            data-callback="handleCredentialResponse" data-auto_prompt="false">
+                        </div>
+                        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"
+                            data-text="signin_with" data-shape="pill" data-logo_alignment="left" data-width="320">
+                        </div>
+                    </div>
+
+                    <div id="error-message" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            <p class="text-red-700 text-sm font-medium"></p>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <p class="text-sm text-gray-500 text-center mb-4">Tính năng của ứng dụng:</p>
+                        <div class="space-y-3">
+                            <div class="flex items-center text-sm text-gray-700">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Trò chuyện bằng giọng nói với AI
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Chia sẻ màn hình để được hỗ trợ
+                            </div>
+                            <div class="flex items-center text-sm text-gray-700">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Giải đáp thắc mắc tức thì
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center space-y-6">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Chưa cấu hình Google OAuth</h3>
+                        <p class="text-gray-600 mb-4">Vui lòng thêm <code
+                                class="bg-gray-100 px-2 py-1 rounded text-sm text-red-600">GOOGLE_CLIENT_ID</code> vào
+                            file <code class="bg-gray-100 px-2 py-1 rounded text-sm">.env</code></p>
+                    </div>
+                    <div class="bg-blue-50 rounded-xl p-6 text-left">
+                        <h4 class="font-semibold text-gray-800 mb-3">Hướng dẫn cấu hình:</h4>
+                        <ol class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <span
+                                    class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold mr-3 flex-shrink-0 mt-0.5">1</span>
+                                <span>Truy cập <a href="https://console.cloud.google.com/apis/credentials"
+                                        target="_blank" class="text-blue-600 hover:underline">Google Cloud
+                                        Console</a></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span
+                                    class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold mr-3 flex-shrink-0 mt-0.5">2</span>
+                                <span>Tạo OAuth 2.0 Client ID</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span
+                                    class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold mr-3 flex-shrink-0 mt-0.5">3</span>
+                                <span>Thêm http://localhost:5000 vào Authorized JavaScript origins</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span
+                                    class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-bold mr-3 flex-shrink-0 mt-0.5">4</span>
+                                <span>Copy Client ID vào file .env</span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer -->
+            <p class="text-center text-gray-500 text-sm mt-8">
+                Được hỗ trợ bởi Google Gemini AI ✨
+            </p>
+        </div>
+    </div>
+
+    <script>
+        async function handleCredentialResponse(response) {
+            try {
+                const result = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        credential: response.credential
+                    })
+                });
+
+                const data = await result.json();
+
+                if (data.success) {
+                    console.log('✅ Đăng nhập thành công:', data.user);
+                    window.location.href = '/app';
+                } else {
+                    showError('Đăng nhập thất bại: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('❌ Lỗi đăng nhập:', error);
+                showError('Lỗi kết nối. Vui lòng thử lại.');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.querySelector('p').textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
