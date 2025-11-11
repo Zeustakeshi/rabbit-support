@@ -216,7 +216,11 @@
             }, 500);
         });
 
-        const URL = "ws://localhost:5000/ws";
+        // Tự động detect WebSocket URL dựa trên protocol hiện tại
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const URL = `${wsProtocol}//${window.location.host}/ws`;
+        console.log("🔌 WebSocket URL:", URL);
+
         const video = document.getElementById("videoElement");
         const canvas = document.getElementById("canvasElement");
         let context;
